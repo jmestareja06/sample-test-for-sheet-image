@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+<input type="file" id="payment" accept="image/*">
+<input type="file" id="logo" accept="image/*">
+<button type="submit" id="submitbtn">Submit</button>
+
+</body>
+<script>
+    let url = "https://script.google.com/macros/s/AKfycbztDsOYJXS06RMpIVpbaRK3quJa4MhU8CEuQ_ve4Gt12YNZ5ZcAVQY5ni4g6xD7wJM/exec";
+    let paymentFile = document.getElementById('payment');
+    let logoFile = document.getElementById('logo');
+    let submitbtn = document.getElementById('submitbtn');
+
+    submitbtn.addEventListener('click', () => {
+        // Process paymentFile
+        let frPayment = new FileReader();
+        frPayment.addEventListener('loadend', () => {
+            let resPayment = frPayment.result;
+            let sptPayment = resPayment.split("base64,")[1];
+            let objPayment = {
+                base64: sptPayment,
+                type: paymentFile.files[0].type,
+                name: paymentFile.files[0].name
+            };
+            fetch(url, {
+             method: "POST",
+             body: JSON.stringify(objPayment)
+            })
+            .then(r => r.text())
+            .then(data => console.log(data));
+        });
+        frPayment.readAsDataURL(paymentFile.files[0]);
+
+        // Process logoFile
+        let frLogo = new FileReader();
+        frLogo.addEventListener('loadend', () => {
+            let resLogo = frLogo.result;
+            let sptLogo = resLogo.split("base64,")[1];
+            let objLogo = {
+                base64: sptLogo,
+                type: logoFile.files[0].type,
+                name: logoFile.files[0].name
+            };
+            fetch(url, {
+              method: "POST",
+              body: JSON.stringify(objLogo)
+            })
+            .then(r => r.text())
+            .then(data => console.log(data));
+        });
+        frLogo.readAsDataURL(logoFile.files[0]);
+    });
+</script>
+</html>
